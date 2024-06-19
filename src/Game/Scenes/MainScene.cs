@@ -8,11 +8,12 @@ public class MainScene : IScene
     private readonly int _columns;
     private readonly float _scaleFactor;
     private Camera2D _camera;
+    private float _timeUntilTicks = 1f;
+    private float _tickTimeCount = 0f;
 
     public Color ClearColor => Color.DarkGray;
     public int Rows => _rows;
     public int Columns => _columns;
-    public float scaleFactor => _scaleFactor;
 
     public static Color[] CellColors =>[
         Color.DarkGreen,
@@ -30,6 +31,7 @@ public class MainScene : IScene
             Zoom = _scaleFactor,
             Rotation = 0f
         };
+        _tickTimeCount = _timeUntilTicks;
     }
 
     public void Start()
@@ -39,7 +41,11 @@ public class MainScene : IScene
 
     public void Update()
     {
-        
+        _tickTimeCount -= Raylib.GetFrameTime();
+        if(_tickTimeCount <= 0f) {
+            _tickTimeCount = _timeUntilTicks;
+            // Update Objects here
+        }
     }
 
     public void End()

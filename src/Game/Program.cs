@@ -6,7 +6,7 @@ public class Game {
     private const string _windowTitle = "Snake for Two";   
     public static int WindowWidth => 600;
     public static int WindowHeight => 600;
-    public static int TargetFPS => 30;
+    public static int TargetFPS => 120;
     
     private IScene _currentScene;
 
