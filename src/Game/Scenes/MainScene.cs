@@ -21,7 +21,6 @@ public class MainScene : IScene
 
     public MainScene(int rows, int columns) {
         _rows = Math.Max(1, rows);
-        Console.WriteLine(_columns + _rows);
         _columns = Math.Max(1, columns);
         float height = (_rows + 2f) * TileSize;
         _scaleFactor = Raylib.GetScreenHeight() / height;
@@ -55,7 +54,7 @@ public class MainScene : IScene
             for(int i = 0; i < Rows; i++) {
                 for(int j = 0; j < Columns; j ++) {
                     int index = (i + j) % CellColors.Length;
-                    Raylib.DrawRectangleV(new Vector2(i, j) * TileSize, Vector2.One * TileSize, CellColors[index]);
+                    Raylib.DrawRectangleV(new Vector2(j, i) * TileSize, Vector2.One * TileSize, CellColors[index]);
                 }
             }
 

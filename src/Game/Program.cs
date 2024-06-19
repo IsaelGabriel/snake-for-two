@@ -32,7 +32,7 @@ public class Game {
     }
 
     private void Start() {
-        _currentScene = new MainScene(5, 5);
+        _currentScene = new MainScene(8, 8);
         _currentScene.Start();
     }
 
