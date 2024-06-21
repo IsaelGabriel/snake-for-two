@@ -7,7 +7,7 @@ public enum Action: int {
     Right
 }
 
-public static class PlayerInputManager {
+public static class Input {
     private static readonly Dictionary<Action,KeyboardKey>[] Keys = [
         new(){
             { Action.Up, KeyboardKey.Up},
