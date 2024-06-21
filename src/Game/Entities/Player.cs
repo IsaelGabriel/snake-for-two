@@ -91,7 +91,7 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
             int oldY = y;
             x = newX;
             y = newY;
-            if(x != oldX || y != oldY) {
+            if((x != oldX || y != oldY) && sections.Count > 0) {
                 sections.RemoveAt(sections.Count - 1);
                 sections.Insert(0, new Vector2(oldX, oldY));
             }else {

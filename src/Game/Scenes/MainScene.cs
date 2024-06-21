@@ -7,6 +7,7 @@ public class MainScene : IScene
     private const int _defaultColumns = 20;
     private const float _defaultPlayerMovementInterval = 0.75f;
     private const float _margin = 2f;
+    private const int _powerUpChance = 1;
 
     public const int TileSize = 16;
     private readonly int _rows;
@@ -72,7 +73,7 @@ public class MainScene : IScene
         }
         _deleteList = [];
 
-        if(!_cellEntities.OfType<Item>().Any(i => i.type == ItemType.Apple)) GenerateApple();
+        if(!_cellEntities.OfType<Item>().Any()) GenerateApple();
     }
 
     private void GenerateApple() {
@@ -82,7 +83,7 @@ public class MainScene : IScene
             x = _rng.Next() % Columns;
             y = _rng.Next() % Rows;
         } while(GetEntityInCell(x, y) != null);
-        ItemType type = (_rng.Next() % 7 != 0)? ItemType.Apple : ItemType.PowerUp;
+        ItemType type = (_rng.Next() % _powerUpChance != 0)? ItemType.Apple : ItemType.PowerUp;
 
         Item apple = new Item(type, x, y, this);
         _cellEntities.Add(apple);
