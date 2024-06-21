@@ -19,15 +19,13 @@ public class Player(int x, int y, MainScene parentScene, float movementInterval)
         }
     }
     private Color color = Color.Blue;
-
+    public List<Vector2> sections = [new(x, y+1), new(x, y+2)];
 
     public override void Update() {
         Vector2 newMovement = new((float) (Raylib.IsKeyPressed(KeyboardKey.Right) - Raylib.IsKeyPressed(KeyboardKey.Left)), 0);
         if(newMovement.X == 0f)
             newMovement.Y = (float) (Raylib.IsKeyPressed(KeyboardKey.Down) - Raylib.IsKeyPressed(KeyboardKey.Up));
-        if(newMovement != Vector2.Zero && newMovement != -movement) {
-            movement = newMovement;
-        }
+        movement = newMovement;
 
         _movementIntervalCount -= Raylib.GetFrameTime();
 
@@ -37,6 +35,8 @@ public class Player(int x, int y, MainScene parentScene, float movementInterval)
         int newY = y + (int) movement.Y;
         CellEntity? collision = scene.GetEntityInCell(newX, newY);
         if(collision == null) {
+            sections.RemoveAt(sections.Count - 1);
+            sections.Insert(0, new Vector2(x, y));
             x = newX;
             y = newY;
         }
@@ -46,5 +46,9 @@ public class Player(int x, int y, MainScene parentScene, float movementInterval)
 
     public override void Render() {
         Raylib.DrawRectangle(x * MainScene.TileSize, y * MainScene.TileSize, MainScene.TileSize, MainScene.TileSize, Color.Blue);
+        foreach(Vector2 section in sections) {
+            Raylib.DrawRectangleV(section * MainScene.TileSize, Vector2.One * MainScene.TileSize, Color.SkyBlue);
+        }
+    
     }
 }
