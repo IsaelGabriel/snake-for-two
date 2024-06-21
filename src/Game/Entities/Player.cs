@@ -37,7 +37,6 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
     public ItemType? item = null;
 
     public override void Update() {
-        if(_ID == 1) return;
         Vector2 newMovement = new(Input.GetAxisPress(_ID, Action.Left, Action.Right), 0);
         if(newMovement.X == 0f)
             newMovement.Y = Input.GetAxisPress(_ID, Action.Up, Action.Down);

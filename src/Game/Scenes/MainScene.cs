@@ -82,7 +82,9 @@ public class MainScene : IScene
             x = _rng.Next() % Columns;
             y = _rng.Next() % Rows;
         } while(GetEntityInCell(x, y) != null);
-        Item apple = new Item(ItemType.Apple, x, y, this);
+        ItemType type = (_rng.Next() % 7 != 0)? ItemType.Apple : ItemType.PowerUp;
+
+        Item apple = new Item(type, x, y, this);
         _cellEntities.Add(apple);
         apple.Start();
 
