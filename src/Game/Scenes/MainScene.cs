@@ -5,6 +5,7 @@ public class MainScene : IScene
 {
     private const int _defaultRows = 20;
     private const int _defaultColumns = 20;
+    private const float _defaultPlayerMovementInterval = 0.75f;
 
     public const int TileSize = 16;
     private readonly int _rows;
@@ -36,8 +37,6 @@ public class MainScene : IScene
             Zoom = _scaleFactor,
             Rotation = 0f
         };
-        // Remove Later
-        _cellEntities.Add(new Player(4, 2, this, 0.8f));
     }
 
     public static MainScene GenerateMainScene(int rows, int columns) {
@@ -51,6 +50,7 @@ public class MainScene : IScene
     public void Start()
     {
         foreach(CellEntity entity in _cellEntities) entity.Start();
+        AddEntity(new Player(Columns - 1, Rows / 2 - 1, this, _defaultPlayerMovementInterval));
 
     }
 
@@ -108,6 +108,11 @@ public class MainScene : IScene
             if(entity.IsFillingCell(x, y)) return entity;
         }
         return null;
+    }
+
+    public void AddEntity(CellEntity entity) {
+        _cellEntities.Add(entity);
+        entity.Start();
     }
 
     public void Destroy(CellEntity entity) {
