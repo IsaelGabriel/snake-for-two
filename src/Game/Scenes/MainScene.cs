@@ -8,8 +8,6 @@ public class MainScene : IScene
     private readonly int _columns;
     private readonly float _scaleFactor;
     private Camera2D _camera;
-    private float _timeUntilTicks = 0.5f;
-    private float _tickTimeCount = 0f;
 
     public Color ClearColor => Color.DarkGray;
     public int Rows => _rows;
@@ -33,9 +31,8 @@ public class MainScene : IScene
             Zoom = _scaleFactor,
             Rotation = 0f
         };
-        _tickTimeCount = _timeUntilTicks;
         // Remove Later
-        _players.Add(new Player(4, 2, this));
+        _players.Add(new Player(4, 2, this, 0.8f));
     }
 
     public void Start()
@@ -45,16 +42,9 @@ public class MainScene : IScene
 
     public void Update()
     {
-        Vector2 newMovement = new((float) (Raylib.IsKeyPressed(KeyboardKey.Right) - Raylib.IsKeyPressed(KeyboardKey.Left)), 0);
-        if(newMovement.X == 0f) newMovement.Y = (float) (Raylib.IsKeyPressed(KeyboardKey.Down) - Raylib.IsKeyPressed(KeyboardKey.Up));
-        _players[0].movement = newMovement;
 
-        _tickTimeCount -= Raylib.GetFrameTime();
-        if(_tickTimeCount <= 0f) {
-            _tickTimeCount = _timeUntilTicks;
-            // Update Objects here
-            foreach(Player player in _players) player.Update();
-        }
+        foreach(Player player in _players) player.Update();
+        
     }
 
     public void End()
