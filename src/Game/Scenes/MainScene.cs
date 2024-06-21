@@ -35,7 +35,6 @@ public class MainScene : IScene
         };
         // Remove Later
         _cellEntities.Add(new Player(4, 2, this, 0.8f));
-        _cellEntities.Add(new Apple(0, 0, this));
     }
 
     public void Start()
@@ -57,7 +56,16 @@ public class MainScene : IScene
     }
 
     private void GenerateApple() {
-        _cellEntities.Add(new Apple(0, 0, this));
+        int x = 0;
+        int y = 0;
+        do {
+            x = _rng.Next() % Columns;
+            y = _rng.Next() % Rows;
+        } while(GetEntityInCell(x, y) != null);
+        Apple apple = new Apple(x, y, this);
+        _cellEntities.Add(apple);
+        apple.Start();
+
     }
 
     public void End()

@@ -20,7 +20,7 @@ public class Player(int x, int y, MainScene parentScene, float movementInterval)
         }
     }
     private Color color = Color.Blue;
-    public List<Vector2> sections = [new(x, y+1), new(x, y+2)];
+    private List<Vector2> sections = [new(x, y+1), new(x, y+2)];
 
     public override void Update() {
         Vector2 newMovement = new((float) (Raylib.IsKeyPressed(KeyboardKey.Right) - Raylib.IsKeyPressed(KeyboardKey.Left)), 0);
@@ -58,5 +58,11 @@ public class Player(int x, int y, MainScene parentScene, float movementInterval)
             Raylib.DrawRectangleV(section * MainScene.TileSize, Vector2.One * MainScene.TileSize, Color.SkyBlue);
         }
     
+    }
+
+    public override bool IsFillingCell(int x, int y)
+    {
+        if(this.x == x && this.y == y) return true;
+        return sections.Contains(new Vector2(x, y));
     }
 }
