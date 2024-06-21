@@ -3,7 +3,7 @@ using Raylib_cs;
 
 public class MainScene : IScene
 {
-    public const int TileSize = 32;
+    public const int TileSize = 16;
     private readonly int _rows;
     private readonly int _columns;
     private readonly float _scaleFactor;
@@ -52,7 +52,7 @@ public class MainScene : IScene
         }
         _deleteList = [];
 
-        if(!_cellEntities.OfType<Apple>().Any()) GenerateApple();
+        if(!_cellEntities.OfType<Item>().Any(i => i.type == ItemType.Apple)) GenerateApple();
     }
 
     private void GenerateApple() {
@@ -62,7 +62,7 @@ public class MainScene : IScene
             x = _rng.Next() % Columns;
             y = _rng.Next() % Rows;
         } while(GetEntityInCell(x, y) != null);
-        Apple apple = new Apple(x, y, this);
+        Item apple = new Item(ItemType.Apple, x, y, this);
         _cellEntities.Add(apple);
         apple.Start();
 

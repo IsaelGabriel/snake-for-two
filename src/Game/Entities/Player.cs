@@ -36,9 +36,17 @@ public class Player(int x, int y, MainScene parentScene, float movementInterval)
         CellEntity? collision = scene.GetEntityInCell(newX, newY);
         bool solidCollision = false;
         if(collision != null) {
-            if(collision is Apple) {
-                sections.Add(sections[sections.Count - 1]);
-                scene.Destroy(collision);
+            if(collision is Item) {
+                switch(((Item)collision).type) {
+                    case ItemType.Apple:
+                        sections.Add(sections[sections.Count - 1]);
+                        scene.Destroy(collision);
+                    break;
+                    default:
+                        scene.Destroy(collision);
+                    break;
+                }
+                
             }else if(collision == this) {
                 solidCollision = true;
                 Game.LoadScene(new GameOverScene(0));
