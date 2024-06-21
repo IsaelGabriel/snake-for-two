@@ -29,4 +29,10 @@ public static class Input {
         return Raylib.IsKeyPressed(Keys[ID][action]);
     }
 
+    public static int GetAxisPress(int ID, Action negativeAction, Action positiveAction) {
+        int positive = IsActionPressed(ID, positiveAction)? 1 : 0;
+        int negative = IsActionPressed(ID, negativeAction)? 1 : 0;
+        return positive - negative;
+    }
+
 }

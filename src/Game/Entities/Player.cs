@@ -1,10 +1,11 @@
 using System.Numerics;
 using Raylib_cs;
 
-public class Player(int x, int y, MainScene parentScene, float movementInterval) : CellEntity(x, y, parentScene) {
+public class Player(int ID, int x, int y, MainScene parentScene, float movementInterval) : CellEntity(x, y, parentScene) {
     
     private float _movementInterval = movementInterval;
     private float _movementIntervalCount = movementInterval;
+    private readonly int _ID = ID;
     private Vector2 _lastMovement = new(0, -1);
     private Vector2 _movement = new(0, -1);
     public Vector2 movement {
@@ -22,9 +23,9 @@ public class Player(int x, int y, MainScene parentScene, float movementInterval)
     private List<Vector2> sections = [new(x, y+1), new(x, y+2)];
 
     public override void Update() {
-        Vector2 newMovement = new((float) (Raylib.IsKeyPressed(KeyboardKey.Right) - Raylib.IsKeyPressed(KeyboardKey.Left)), 0);
+        Vector2 newMovement = new(Input.GetAxisPress(_ID, Action.Left, Action.Right), 0);
         if(newMovement.X == 0f)
-            newMovement.Y = (float) (Raylib.IsKeyPressed(KeyboardKey.Down) - Raylib.IsKeyPressed(KeyboardKey.Up));
+            newMovement.Y = Input.GetAxisPress(_ID, Action.Up, Action.Down);
         movement = newMovement;
 
         _movementIntervalCount -= Raylib.GetFrameTime();
@@ -61,7 +62,7 @@ public class Player(int x, int y, MainScene parentScene, float movementInterval)
                 sections.RemoveAt(sections.Count - 1);
                 sections.Insert(0, new Vector2(oldX, oldY));
             }else {
-                Game.LoadScene(new GameOverScene(0));
+                Game.LoadScene(new GameOverScene(_ID));
             }
         }
         _lastMovement = _movement;
