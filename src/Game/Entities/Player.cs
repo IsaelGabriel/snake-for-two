@@ -40,16 +40,22 @@ public class Player(int x, int y, MainScene parentScene, float movementInterval)
             if(collision is Apple) {
                 sections.Add(sections[sections.Count - 1]);
                 scene.Destroy(collision);
+            }else if(collision == this) {
+                solidCollision = true;
             }
         }
         if(!solidCollision) {
-            sections.RemoveAt(sections.Count - 1);
-            sections.Insert(0, new Vector2(x, y));
+            int oldX = x;
+            int oldY = y;
             x = newX;
             y = newY;
+            if(x != oldX || y != oldY) {
+                sections.RemoveAt(sections.Count - 1);
+                sections.Insert(0, new Vector2(oldX, oldY));
+            }
         }
         _lastMovement = _movement;
-        _movementIntervalCount = _movementInterval;
+        _movementIntervalCount = Math.Clamp(_movementInterval - (sections.Count - 2) * 0.01f, 0.025f, _movementInterval);
     }   
 
     public override void Render() {
