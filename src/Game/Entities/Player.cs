@@ -1,5 +1,4 @@
 using System.Numerics;
-using System.Text.RegularExpressions;
 using Raylib_cs;
 
 public class Player(int x, int y, MainScene parentScene, float movementInterval) : CellEntity(x, y, parentScene) {

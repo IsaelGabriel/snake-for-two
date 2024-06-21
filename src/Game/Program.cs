@@ -44,6 +44,7 @@ public class Game {
             if(_sceneToLoad != null) {
                 _currentScene.End();
                 _currentScene = _sceneToLoad;
+                _sceneToLoad = null;
                 _currentScene.Start();
             }
         }
