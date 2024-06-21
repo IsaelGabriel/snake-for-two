@@ -8,6 +8,8 @@ public class Game {
     public static int WindowHeight => 600;
     public static int TargetFPS => 120;
     
+    
+    private IScene? _sceneToLoad = null;
     private IScene _currentScene;
 
     private Game() {
@@ -25,10 +27,9 @@ public class Game {
 
     }
 
-    public void LoadScene(IScene scene) {
-        _currentScene.End();
-        _currentScene = scene;
-        _currentScene.Start();
+    public static void LoadScene(IScene scene) {
+        if(_instance._sceneToLoad != null) return;
+        _instance._sceneToLoad = scene;
     }
 
     private void Start() {
@@ -40,6 +41,11 @@ public class Game {
         while(!Raylib.WindowShouldClose()) {
             Update();
             Render();
+            if(_sceneToLoad != null) {
+                _currentScene.End();
+                _currentScene = _sceneToLoad;
+                _currentScene.Start();
+            }
         }
     }
 

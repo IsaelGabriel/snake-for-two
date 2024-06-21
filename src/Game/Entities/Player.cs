@@ -42,6 +42,7 @@ public class Player(int x, int y, MainScene parentScene, float movementInterval)
                 scene.Destroy(collision);
             }else if(collision == this) {
                 solidCollision = true;
+                Game.LoadScene(new GameOverScene(0));
             }
         }
         if(!solidCollision) {
@@ -52,6 +53,8 @@ public class Player(int x, int y, MainScene parentScene, float movementInterval)
             if(x != oldX || y != oldY) {
                 sections.RemoveAt(sections.Count - 1);
                 sections.Insert(0, new Vector2(oldX, oldY));
+            }else {
+                Game.LoadScene(new GameOverScene(0));
             }
         }
         _lastMovement = _movement;
