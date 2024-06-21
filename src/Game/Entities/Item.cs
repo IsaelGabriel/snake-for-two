@@ -2,7 +2,8 @@ using System.Numerics;
 using Raylib_cs;
 
 public enum ItemType {
-    Apple
+    Apple,
+    PowerUp,
 }
 
 public class Item(ItemType itemType, int x, int y, MainScene parentScene) : CellEntity(x, y, parentScene)
@@ -22,6 +23,9 @@ public class Item(ItemType itemType, int x, int y, MainScene parentScene) : Cell
         switch(type) {
             case ItemType.Apple:
                 color = Color.Red;
+                break;
+            case ItemType.PowerUp:
+                color = Color.Gold;
                 break;
             default: break;
         }

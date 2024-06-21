@@ -15,6 +15,7 @@ public class MainScene : IScene
     private Camera2D _camera;
     private List<CellEntity> _cellEntities = [];
     private List<CellEntity> _deleteList = [];
+    private List<CellEntity> _addList = [];
     private readonly Random _rng = new Random();
     private IBackground _background;
 
@@ -56,12 +57,15 @@ public class MainScene : IScene
         foreach(CellEntity entity in _cellEntities) entity.Start();
         AddEntity(new Player(0, Columns - 1, Rows / 2 - 1, this, _defaultPlayerMovementInterval));
         AddEntity(new Player(1, 0, Rows / 2 - 1, this, _defaultPlayerMovementInterval));
-
     }
 
     public void Update()
     {
-
+        foreach(CellEntity entity in _addList) {
+            _cellEntities.Add(entity);
+            entity.Start();
+        }
+        _addList = [];
         foreach(CellEntity entity in _cellEntities) entity.Update();
         foreach(CellEntity entity in _deleteList) {
             _cellEntities.RemoveAll(e => e == entity);
@@ -116,8 +120,7 @@ public class MainScene : IScene
     }
 
     public void AddEntity(CellEntity entity) {
-        _cellEntities.Add(entity);
-        entity.Start();
+        _addList.Add(entity);
     }
 
     public void Destroy(CellEntity entity) {

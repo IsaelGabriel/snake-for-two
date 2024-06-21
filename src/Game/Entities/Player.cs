@@ -2,6 +2,7 @@ using System.Numerics;
 using Raylib_cs;
 
 public class Player(uint ID, int x, int y, MainScene parentScene, float movementInterval) : CellEntity(x, y, parentScene) {
+    private static readonly Color _powerUpColor = Color.RayWhite;
     private static readonly Color[] _headColors = [
         Color.Purple,
         Color.Yellow,
@@ -33,7 +34,10 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
     private Color _bodyColor = (_bodyColors.Length > ID)? _bodyColors[ID] : Color.DarkGray;
     private List<Vector2> sections = [new(x, y+1), new(x, y+2)];
 
+    public ItemType? item = null;
+
     public override void Update() {
+        if(_ID == 1) return;
         Vector2 newMovement = new(Input.GetAxisPress(_ID, Action.Left, Action.Right), 0);
         if(newMovement.X == 0f)
             newMovement.Y = Input.GetAxisPress(_ID, Action.Up, Action.Down);
@@ -54,6 +58,10 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
                         sections.Add(sections[sections.Count - 1]);
                         scene.Destroy(collision);
                     break;
+                    case ItemType.PowerUp:
+                        item = ItemType.PowerUp;
+                        scene.Destroy(collision);
+                    break;
                     default:
                         scene.Destroy(collision);
                     break;
@@ -61,7 +69,22 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
                 
             }else if(collision is Player) {
                 solidCollision = true;
-                Game.LoadScene(new GameOverScene(_ID));
+                if(item == ItemType.PowerUp) {
+                    if(collision.x == x && collision.y == y) Game.LoadScene(new GameOverScene(_ID));
+                    else {
+                        Player enemy = (Player) collision;
+                        int index = enemy.IndexOfSection(newX, newY);
+                        enemy.sections.RemoveAt(index);
+                        while(index < enemy.sections.Count) {
+                            scene.AddEntity(new Item(ItemType.Apple, (int) enemy.sections[index].X, (int) enemy.sections[index].Y, scene));
+                            enemy.sections.RemoveAt(index);
+                        }
+                        solidCollision = false;
+                    }
+                }else {
+                    Game.LoadScene(new GameOverScene(_ID));
+                }
+                item = null;
             }
         }
         if(!solidCollision) {
@@ -78,10 +101,16 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
         }
         _lastMovement = _movement;
         _movementIntervalCount = Math.Clamp(_movementInterval - (sections.Count - 2) * 0.01f, 0.025f, _movementInterval);
+        if(item == ItemType.PowerUp) _movementIntervalCount *= 0.5f;
     }   
 
     public override void Render() {
-        Raylib.DrawRectangle(x * MainScene.TileSize, y * MainScene.TileSize, MainScene.TileSize, MainScene.TileSize, _headColor);
+        Vector2 position = new Vector2(x, y) * MainScene.TileSize;
+        Vector2 size = Vector2.One * MainScene.TileSize;
+        Raylib.DrawRectangleV(position, size, _headColor);
+        if(item == ItemType.PowerUp) {
+            Raylib.DrawRectangleV(position + Vector2.One * 3, size - Vector2.One * 6, _powerUpColor);
+        }
         foreach(Vector2 section in sections) {
             Raylib.DrawRectangleV(section * MainScene.TileSize, Vector2.One * MainScene.TileSize, _bodyColor);
         }
@@ -92,5 +121,14 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
     {
         if(this.x == x && this.y == y) return true;
         return sections.Contains(new Vector2(x, y));
+    }
+    
+    public int IndexOfSection(int x, int y) {
+        int i = 0;
+        foreach(Vector2 section in sections) {
+            if((int) section.X == x && (int) section.Y == y) return i;
+            i++;
+        }
+        return -1;
     }
 }
