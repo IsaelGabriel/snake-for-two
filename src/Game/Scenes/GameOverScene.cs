@@ -7,7 +7,7 @@ public class GameOverScene(int winnerID) : IScene
 
     public void Update() {
         if(Raylib.IsKeyPressed(KeyboardKey.Space)) {
-            Game.LoadScene(new MainScene(8, 8));
+            Game.LoadScene(MainScene.GenerateMainScene());
         }
     }
 

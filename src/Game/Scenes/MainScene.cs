@@ -3,6 +3,9 @@ using Raylib_cs;
 
 public class MainScene : IScene
 {
+    private const int _defaultRows = 20;
+    private const int _defaultColumns = 20;
+
     public const int TileSize = 16;
     private readonly int _rows;
     private readonly int _columns;
@@ -22,7 +25,7 @@ public class MainScene : IScene
     private List<CellEntity> _deleteList = [];
     private Random _rng = new Random();
 
-    public MainScene(int rows, int columns) {
+    private MainScene(int rows, int columns) {
         _rows = Math.Max(1, rows);
         _columns = Math.Max(1, columns);
         float height = (_rows + 2f) * TileSize;
@@ -35,6 +38,14 @@ public class MainScene : IScene
         };
         // Remove Later
         _cellEntities.Add(new Player(4, 2, this, 0.8f));
+    }
+
+    public static MainScene GenerateMainScene(int rows, int columns) {
+        return new MainScene(rows, columns);
+    }
+
+    public static MainScene GenerateMainScene() {
+        return new MainScene(_defaultRows, _defaultColumns);
     }
 
     public void Start()
