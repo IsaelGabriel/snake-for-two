@@ -59,7 +59,7 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
                     break;
                 }
                 
-            }else if(collision == this) {
+            }else if(collision is Player) {
                 solidCollision = true;
                 Game.LoadScene(new GameOverScene(_ID));
             }
