@@ -6,6 +6,7 @@ public class MainScene : IScene
     private const int _defaultRows = 20;
     private const int _defaultColumns = 20;
     private const float _defaultPlayerMovementInterval = 0.75f;
+    private const float _margin = 1f;
 
     public const int TileSize = 16;
     private readonly int _rows;
@@ -29,10 +30,10 @@ public class MainScene : IScene
     private MainScene(int rows, int columns) {
         _rows = Math.Max(1, rows);
         _columns = Math.Max(1, columns);
-        float height = (_rows + 2f) * TileSize;
+        float height = (_rows + _margin * 2) * TileSize;
         _scaleFactor = Raylib.GetScreenHeight() / height;
         _camera = new Camera2D() {
-            Target = -Vector2.One * TileSize,
+            Target = -Vector2.One * TileSize * _margin,
             Offset = Vector2.Zero,
             Zoom = _scaleFactor,
             Rotation = 0f
