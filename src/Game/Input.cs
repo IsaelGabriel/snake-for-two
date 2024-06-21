@@ -23,13 +23,13 @@ public static class Input {
         }
     ];
 
-    public static bool IsActionPressed(int ID, Action action) {
+    public static bool IsActionPressed(uint ID, Action action) {
         if(ID < 0 || ID >= Keys.Length) return false; 
         if(!Keys[ID].ContainsKey(action)) return false;
         return Raylib.IsKeyPressed(Keys[ID][action]);
     }
 
-    public static int GetAxisPress(int ID, Action negativeAction, Action positiveAction) {
+    public static int GetAxisPress(uint ID, Action negativeAction, Action positiveAction) {
         int positive = IsActionPressed(ID, positiveAction)? 1 : 0;
         int negative = IsActionPressed(ID, negativeAction)? 1 : 0;
         return positive - negative;

@@ -1,8 +1,8 @@
 using Raylib_cs;
 
-public class GameOverScene(int winnerID) : IScene
+public class GameOverScene(uint winnerID) : IScene
 {
-    private int _winnerID = winnerID;
+    private uint _winnerID = winnerID;
     public Color ClearColor => Color.Black;
 
     public IBackground? Background => null;

@@ -1,11 +1,21 @@
 using System.Numerics;
 using Raylib_cs;
 
-public class Player(int ID, int x, int y, MainScene parentScene, float movementInterval) : CellEntity(x, y, parentScene) {
-    
+public class Player(uint ID, int x, int y, MainScene parentScene, float movementInterval) : CellEntity(x, y, parentScene) {
+    private static readonly Color[] _headColors = [
+        Color.Purple,
+        Color.Yellow,
+        Color.Blue,
+    ];
+    private static readonly Color[] _bodyColors = [
+        Color.DarkPurple,
+        Color.Orange,
+        Color.SkyBlue,
+    ];
+
     private float _movementInterval = movementInterval;
     private float _movementIntervalCount = movementInterval;
-    private readonly int _ID = ID;
+    private readonly uint _ID = ID;
     private Vector2 _lastMovement = new(0, -1);
     private Vector2 _movement = new(0, -1);
     public Vector2 movement {
@@ -19,7 +29,8 @@ public class Player(int ID, int x, int y, MainScene parentScene, float movementI
             
         }
     }
-    private Color color = Color.Blue;
+    private Color _headColor = (_headColors.Length > ID)? _headColors[ID] : Color.Gray;
+    private Color _bodyColor = (_bodyColors.Length > ID)? _bodyColors[ID] : Color.DarkGray;
     private List<Vector2> sections = [new(x, y+1), new(x, y+2)];
 
     public override void Update() {
@@ -50,7 +61,7 @@ public class Player(int ID, int x, int y, MainScene parentScene, float movementI
                 
             }else if(collision == this) {
                 solidCollision = true;
-                Game.LoadScene(new GameOverScene(0));
+                Game.LoadScene(new GameOverScene(_ID));
             }
         }
         if(!solidCollision) {
@@ -70,9 +81,9 @@ public class Player(int ID, int x, int y, MainScene parentScene, float movementI
     }   
 
     public override void Render() {
-        Raylib.DrawRectangle(x * MainScene.TileSize, y * MainScene.TileSize, MainScene.TileSize, MainScene.TileSize, Color.Blue);
+        Raylib.DrawRectangle(x * MainScene.TileSize, y * MainScene.TileSize, MainScene.TileSize, MainScene.TileSize, _headColor);
         foreach(Vector2 section in sections) {
-            Raylib.DrawRectangleV(section * MainScene.TileSize, Vector2.One * MainScene.TileSize, Color.SkyBlue);
+            Raylib.DrawRectangleV(section * MainScene.TileSize, Vector2.One * MainScene.TileSize, _bodyColor);
         }
     
     }
