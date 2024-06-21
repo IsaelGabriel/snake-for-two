@@ -2,6 +2,8 @@ using System.Numerics;
 using Raylib_cs;
 
 public class Player(uint ID, int x, int y, MainScene parentScene, float movementInterval) : CellEntity(x, y, parentScene) {
+    private const int _defaultLength = 5;
+    
     private static readonly Color _powerUpColor = Color.RayWhite;
     private static readonly Color[] _headColors = [
         Color.Purple,
@@ -32,9 +34,16 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
     }
     private Color _headColor = (_headColors.Length > ID)? _headColors[ID] : Color.Gray;
     private Color _bodyColor = (_bodyColors.Length > ID)? _bodyColors[ID] : Color.DarkGray;
-    private List<Vector2> sections = [new(x, y+1), new(x, y+2)];
+    private List<Vector2> sections = [];
 
     public ItemType? item = null;
+
+    public override void Start()
+    {
+        for(int i = 1; i <= _defaultLength; i++) {
+            sections.Add(new(x, y+i));
+        }
+    }
 
     public override void Update() {
         Vector2 newMovement = new(Input.GetAxisPress(_ID, Action.Left, Action.Right), 0);
