@@ -57,6 +57,7 @@ public class Game {
     private void Render() {
         Raylib.BeginDrawing();
             Raylib.ClearBackground(_currentScene.ClearColor);
+            _currentScene.Background?.Render();
             _currentScene.Render();
         Raylib.EndDrawing();
     }

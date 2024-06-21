@@ -5,6 +5,8 @@ public class GameOverScene(int winnerID) : IScene
     private int _winnerID = winnerID;
     public Color ClearColor => Color.Black;
 
+    public IBackground? Background => null;
+
     public void Update() {
         if(Raylib.IsKeyPressed(KeyboardKey.Space)) {
             Game.LoadScene(MainScene.GenerateMainScene());

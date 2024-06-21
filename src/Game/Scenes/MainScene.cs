@@ -6,15 +6,19 @@ public class MainScene : IScene
     private const int _defaultRows = 20;
     private const int _defaultColumns = 20;
     private const float _defaultPlayerMovementInterval = 0.75f;
-    private const float _margin = 1f;
+    private const float _margin = 2f;
 
     public const int TileSize = 16;
     private readonly int _rows;
     private readonly int _columns;
     private readonly float _scaleFactor;
     private Camera2D _camera;
+    private List<CellEntity> _cellEntities = [];
+    private List<CellEntity> _deleteList = [];
+    private readonly Random _rng = new Random();
+    private IBackground _background;
 
-    public Color ClearColor => Color.DarkGray;
+    public Color ClearColor => Color.Beige;
     public int Rows => _rows;
     public int Columns => _columns;
 
@@ -23,9 +27,7 @@ public class MainScene : IScene
         Color.Green
     ];
 
-    private List<CellEntity> _cellEntities = [];
-    private List<CellEntity> _deleteList = [];
-    private Random _rng = new Random();
+    public IBackground Background => _background;
 
     private MainScene(int rows, int columns) {
         _rows = Math.Max(1, rows);
@@ -38,6 +40,7 @@ public class MainScene : IScene
             Zoom = _scaleFactor,
             Rotation = 0f
         };
+        _background = new SquarePatternBackground(TileSize * 2, _scaleFactor);
     }
 
     public static MainScene GenerateMainScene(int rows, int columns) {
