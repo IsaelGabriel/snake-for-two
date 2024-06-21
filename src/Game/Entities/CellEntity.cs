@@ -1,4 +1,4 @@
-public class CellEntity(int x, int y, MainScene parentScene) {
+public abstract class CellEntity(int x, int y, MainScene parentScene) {
     private int _x = x, _y = y;
     protected MainScene scene = parentScene;
     public int x {get=>_x; set=>_x=Math.Clamp(value, 0, scene.Columns - 1); }
