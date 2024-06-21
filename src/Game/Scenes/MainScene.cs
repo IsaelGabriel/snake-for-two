@@ -3,11 +3,11 @@ using Raylib_cs;
 
 public class MainScene : IScene
 {
-    private const int _defaultRows = 20;
-    private const int _defaultColumns = 20;
+    private const int _defaultRows = 15;
+    private const int _defaultColumns = 15;
     private const float _defaultPlayerMovementInterval = 0.75f;
     private const float _margin = 2f;
-    private const int _powerUpChance = 1;
+    private const int _powerUpChance = 5;
 
     public const int TileSize = 16;
     private readonly int _rows;
