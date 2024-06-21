@@ -1,4 +1,5 @@
 using System.Numerics;
+using System.Text.RegularExpressions;
 using Raylib_cs;
 
 public class Player(int x, int y, MainScene parentScene, float movementInterval) : CellEntity(x, y, parentScene) {
@@ -34,7 +35,14 @@ public class Player(int x, int y, MainScene parentScene, float movementInterval)
         int newX = x + (int) movement.X;
         int newY = y + (int) movement.Y;
         CellEntity? collision = scene.GetEntityInCell(newX, newY);
-        if(collision == null) {
+        bool solidCollision = false;
+        if(collision != null) {
+            if(collision is Apple) {
+                sections.Add(sections[sections.Count - 1]);
+                scene.Destroy(collision);
+            }
+        }
+        if(!solidCollision) {
             sections.RemoveAt(sections.Count - 1);
             sections.Insert(0, new Vector2(x, y));
             x = newX;

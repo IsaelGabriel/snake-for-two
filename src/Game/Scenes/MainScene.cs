@@ -18,7 +18,9 @@ public class MainScene : IScene
         Color.Green
     ];
 
-    private List<Player> _players = [];
+    private List<CellEntity> _cellEntities = [];
+    private List<CellEntity> _deleteList = [];
+    private Random _rng = new Random();
 
     public MainScene(int rows, int columns) {
         _rows = Math.Max(1, rows);
@@ -32,19 +34,30 @@ public class MainScene : IScene
             Rotation = 0f
         };
         // Remove Later
-        _players.Add(new Player(4, 2, this, 0.8f));
+        _cellEntities.Add(new Player(4, 2, this, 0.8f));
+        _cellEntities.Add(new Apple(0, 0, this));
     }
 
     public void Start()
     {
-        foreach(Player player in _players) player.Start();
+        foreach(CellEntity entity in _cellEntities) entity.Start();
+
     }
 
     public void Update()
     {
 
-        foreach(Player player in _players) player.Update();
-        
+        foreach(CellEntity entity in _cellEntities) entity.Update();
+        foreach(CellEntity entity in _deleteList) {
+            _cellEntities.RemoveAll(e => e == entity);
+        }
+        _deleteList = [];
+
+        if(!_cellEntities.OfType<Apple>().Any()) GenerateApple();
+    }
+
+    private void GenerateApple() {
+        _cellEntities.Add(new Apple(0, 0, this));
     }
 
     public void End()
@@ -62,7 +75,7 @@ public class MainScene : IScene
                     Raylib.DrawRectangleV(new Vector2(j, i) * TileSize, Vector2.One * TileSize, CellColors[index]);
                 }
             }
-            foreach(Player player in _players) player.Render();
+            foreach(CellEntity entity in _cellEntities) entity.Render();
 
         Raylib.EndMode2D();
 
@@ -72,9 +85,13 @@ public class MainScene : IScene
     public CellEntity? GetEntityInCell(int x, int y) {
         x = Math.Clamp(x, 0, Columns - 1);
         y = Math.Clamp(y, 0, Rows - 1);
-        foreach(Player player in _players) {
-            if(player.IsFillingCell(x, y)) return player;
+        foreach(CellEntity entity in _cellEntities) {
+            if(entity.IsFillingCell(x, y)) return entity;
         }
         return null;
+    }
+
+    public void Destroy(CellEntity entity) {
+        _deleteList.Add(entity);
     }
 }
