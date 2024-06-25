@@ -143,14 +143,13 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
 
     public override void Render() {
         _animationCount += Raylib.GetFrameTime();
-        if(_animationCount > _movementInterval / 2) _animationCount = _movementInterval / 2;
-        float t = _animationCount / (_movementInterval / 2);
-        Vector2 position = GetAnimationPosition(sections[1], sections[0], t);
+        if(_animationCount > _movementInterval * 0.75f) _animationCount = _movementInterval * 0.75f;
+        Vector2 position = GetAnimationPosition(sections[1], sections[0]);
         Vector2 size = Vector2.One * MainScene.TileSize;
 
 
         for(int i = 1; i < sections.Count - 1; i++) {
-            Raylib.DrawRectangleV(GetAnimationPosition(sections[i+1], sections[i], t), Vector2.One * MainScene.TileSize, _bodyColor);
+            Raylib.DrawRectangleV(GetAnimationPosition(sections[i+1], sections[i]), Vector2.One * MainScene.TileSize, _bodyColor);
         }
         Raylib.DrawRectangleV(position, size, _headColor);
         if(item == ItemType.PowerUp) {
@@ -164,10 +163,10 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
     /// </summary>
     /// <param name="from">Start position.</param>
     /// <param name="to">End position.</param>
-    /// <param name="t">Time of the animation, considering that the start of it is in t = 0, and the end in t = 1.</param>
     /// <returns>The position where the object needs to be.</returns>
-    private Vector2 GetAnimationPosition(Vector2 from, Vector2 to, float t) {
-        Vector2 movement = (to - from) * (float) Math.Sin(t * Math.PI/2);
+    private Vector2 GetAnimationPosition(Vector2 from, Vector2 to) {
+        float t = _animationCount / (_movementInterval * 0.75f);
+        Vector2 movement = (to - from) * t;
         return (from + movement) * MainScene.TileSize;
     }
 
@@ -179,6 +178,7 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
     public int IndexOfSection(int x, int y) {
         int i = 0;
         foreach(Vector2 section in sections) {
+            if(i >= sections.Count - 1) return -1;
             if((int) section.X == x && (int) section.Y == y) return i;
             i++;
         }
