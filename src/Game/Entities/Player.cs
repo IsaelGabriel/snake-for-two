@@ -16,12 +16,14 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
         Color.SkyBlue,
     ];
 
+    private const uint _maxMovementBufferSize = 3;
     private float _movementInterval = movementInterval;
     private float _movementIntervalCount = movementInterval;
     private float _animationCount = 0f;
     private readonly uint _ID = ID;
     private Vector2 _lastMovement = new(0, -1);
     private Vector2 _movement = new(0, -1);
+    private List<Vector2> _movementBuffer = [];
     public Vector2 movement {
         get=>_movement;
         set{
@@ -50,15 +52,35 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
         x = (int) sections[0].X;
         y = (int) sections[0].Y;
 
-        Vector2 newMovement = new(Input.GetAxisPress(_ID, Action.Left, Action.Right), 0);
-        if(newMovement.X == 0f)
-            newMovement.Y = Input.GetAxisPress(_ID, Action.Up, Action.Down);
-        movement = newMovement;
+        Vector2 newMovement = new() {
+            X = Input.GetAxisPress(_ID, Action.Left, Action.Right),
+            Y = Input.GetAxisPress(_ID, Action.Up, Action.Down)
+        };
+
+        if(newMovement != Vector2.Zero) {
+            if(newMovement.X != 0f && newMovement.Y != 0f) {
+                Vector2 moveX = newMovement;
+                Vector2 moveY = newMovement;
+                moveX.Y = 0f;
+                moveY.X = 0f;
+                AddToMovementBuffer(moveX);
+                AddToMovementBuffer(moveY);
+            }else {
+                AddToMovementBuffer(newMovement);
+            }
+        }
+
+
 
         _movementIntervalCount -= Raylib.GetFrameTime();
 
         if(_movementIntervalCount > 0f) return;
         _animationCount = 0f;
+
+        if(_movementBuffer.Count > 0) {
+            movement = _movementBuffer.First();
+            _movementBuffer.RemoveAt(0);
+        }
 
         int newX = (int) sections[0].X + (int) movement.X;
         int newY = (int) sections[0].Y + (int) movement.Y;
@@ -151,7 +173,6 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
 
     public override bool IsFillingCell(int x, int y)
     {
-        if(this.x == x && this.y == y) return true;
         return sections.Contains(new Vector2(x, y));
     }
     
@@ -162,5 +183,19 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
             i++;
         }
         return -1;
+    }
+
+    private void AddToMovementBuffer(Vector2 vector) {
+        if(_movementBuffer.Count == 0 && (vector == -movement || vector == movement)) {
+            return;
+        }
+        if(_movementBuffer.Count != 0) {
+            if(_movementBuffer.Last() == vector || _movementBuffer.Last() == -vector) {
+                return;
+            }
+        }
+        if(_movementBuffer.Count < _maxMovementBufferSize) {
+            _movementBuffer.Add(vector);
+        }
     }
 }
