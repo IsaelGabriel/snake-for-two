@@ -24,9 +24,9 @@ public class MainScene : IScene
     public int Rows => _rows;
     public int Columns => _columns;
 
-    public static Color[] CellColors =>[
-        Color.DarkGreen,
-        Color.Green
+    public readonly static Color[] CellColors = [
+        new(0x53, 0xA6, 0x5f, 0xFF),
+        new(0x07, 0x54, 0x30, 0xFF)
     ];
 
     public IBackground Background => _background;
