@@ -12,8 +12,8 @@ public class SquarePatternBackground(int squareSize, float scaleFactor) : IBackg
 
     public void Render()
     {
-        _offset += Raylib.GetFrameTime() * 0.25f;
-        if(_offset > 2f) _offset = 0f;
+        /*_offset += Raylib.GetFrameTime() * 0.25f;
+        if(_offset > 2f) _offset = 0f;*/
         Vector2 size = Vector2.One * _squareSize;
         for(int i = 0; i < _rows + 2; i++) {
             for(int j = 0; j < _columns + 2; j++) {

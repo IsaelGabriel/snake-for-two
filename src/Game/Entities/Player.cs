@@ -3,7 +3,7 @@ using Raylib_cs;
 
 public class Player(uint ID, int x, int y, MainScene parentScene, float movementInterval) : CellEntity(x, y, parentScene) {
     private const int _defaultLength = 5;
-    
+
     private static readonly Color _powerUpColor = Color.RayWhite;
     private static readonly Color[] _headColors = [
         Color.Purple,
@@ -18,6 +18,7 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
 
     private float _movementInterval = movementInterval;
     private float _movementIntervalCount = movementInterval;
+    private float _animationCount = 0f;
     private readonly uint _ID = ID;
     private Vector2 _lastMovement = new(0, -1);
     private Vector2 _movement = new(0, -1);
@@ -35,17 +36,20 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
     private Color _headColor = (_headColors.Length > ID)? _headColors[ID] : Color.Gray;
     private Color _bodyColor = (_bodyColors.Length > ID)? _bodyColors[ID] : Color.DarkGray;
     private List<Vector2> sections = [];
-
     public ItemType? item = null;
 
     public override void Start()
     {
-        for(int i = 1; i <= _defaultLength; i++) {
+        for(int i = 0; i < _defaultLength; i++) {
             sections.Add(new(x, y+i));
         }
+        sections.Add(sections.Last());
     }
 
     public override void Update() {
+        x = (int) sections[0].X;
+        y = (int) sections[0].Y;
+
         Vector2 newMovement = new(Input.GetAxisPress(_ID, Action.Left, Action.Right), 0);
         if(newMovement.X == 0f)
             newMovement.Y = Input.GetAxisPress(_ID, Action.Up, Action.Down);
@@ -54,9 +58,10 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
         _movementIntervalCount -= Raylib.GetFrameTime();
 
         if(_movementIntervalCount > 0f) return;
+        _animationCount = 0f;
 
-        int newX = x + (int) movement.X;
-        int newY = y + (int) movement.Y;
+        int newX = (int) sections[0].X + (int) movement.X;
+        int newY = (int) sections[0].Y + (int) movement.Y;
         CellEntity? collision = scene.GetEntityInCell(newX, newY);
         bool solidCollision = false;
         if(collision != null) {
@@ -100,9 +105,9 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
             int oldY = y;
             x = newX;
             y = newY;
-            if((x != oldX || y != oldY) && sections.Count > 0) {
+            if((x != oldX || y != oldY) && sections.Count > 2) {
+                sections.Insert(0, new Vector2(x, y));
                 sections.RemoveAt(sections.Count - 1);
-                sections.Insert(0, new Vector2(oldX, oldY));
             }else {
                 Game.LoadScene(new GameOverScene(_ID));
             }
@@ -113,16 +118,33 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
     }   
 
     public override void Render() {
-        Vector2 position = new Vector2(x, y) * MainScene.TileSize;
+        _animationCount += Raylib.GetFrameTime();
+        if(_animationCount > _movementInterval / 2) _animationCount = _movementInterval / 2;
+        float t = _animationCount / (_movementInterval / 2);
+        Vector2 position = GetAnimationPosition(sections[1], sections[0], t);
         Vector2 size = Vector2.One * MainScene.TileSize;
+
+
+        for(int i = 1; i < sections.Count - 1; i++) {
+            Raylib.DrawRectangleV(GetAnimationPosition(sections[i+1], sections[i], t), Vector2.One * MainScene.TileSize, _bodyColor);
+        }
         Raylib.DrawRectangleV(position, size, _headColor);
         if(item == ItemType.PowerUp) {
             Raylib.DrawRectangleV(position + Vector2.One * 3, size - Vector2.One * 6, _powerUpColor);
         }
-        foreach(Vector2 section in sections) {
-            Raylib.DrawRectangleV(section * MainScene.TileSize, Vector2.One * MainScene.TileSize, _bodyColor);
-        }
     
+    }
+
+    /// <summary>
+    /// Calculates the position of an object based on the animation time and the trajectory.
+    /// </summary>
+    /// <param name="from">Start position.</param>
+    /// <param name="to">End position.</param>
+    /// <param name="t">Time of the animation, considering that the start of it is in t = 0, and the end in t = 1.</param>
+    /// <returns>The position where the object needs to be.</returns>
+    private Vector2 GetAnimationPosition(Vector2 from, Vector2 to, float t) {
+        Vector2 movement = (to - from) * (float) Math.Sin(t * Math.PI/2);
+        return (from + movement) * MainScene.TileSize;
     }
 
     public override bool IsFillingCell(int x, int y)
@@ -134,7 +156,7 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
     public int IndexOfSection(int x, int y) {
         int i = 0;
         foreach(Vector2 section in sections) {
-            if((int) section.X == x && (int) section.Y == y) return i;
+            if((int) section.X == x && (int) section.Y == y) return (i != 0)? -1 : i;
             i++;
         }
         return -1;
