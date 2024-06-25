@@ -68,7 +68,7 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
             if(collision is Item) {
                 switch(((Item)collision).type) {
                     case ItemType.Apple:
-                        sections.Add(sections[sections.Count - 1]);
+                        sections.Add(sections.Last());
                         scene.Destroy(collision);
                     break;
                     case ItemType.PowerUp:
@@ -83,10 +83,10 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
             }else if(collision is Player) {
                 solidCollision = true;
                 if(item == ItemType.PowerUp) {
-                    if(collision.x == newX && collision.y == newY) Game.LoadScene(new GameOverScene(_ID));
+                    Player enemy = (Player) collision;
+                    int index = enemy.IndexOfSection(newX, newY);
+                    if(index == 0) Game.LoadScene(new GameOverScene(_ID));
                     else {
-                        Player enemy = (Player) collision;
-                        int index = enemy.IndexOfSection(newX, newY);
                         enemy.sections.RemoveAt(index);
                         while(index < enemy.sections.Count) {
                             scene.AddEntity(new Item(ItemType.Apple, (int) enemy.sections[index].X, (int) enemy.sections[index].Y, scene));
@@ -115,6 +115,8 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
         _lastMovement = _movement;
         _movementIntervalCount = Math.Clamp(_movementInterval - (sections.Count - 2) * 0.01f, 0.025f, _movementInterval);
         if(item == ItemType.PowerUp) _movementIntervalCount *= 0.5f;
+        x = (int) sections[0].X;
+        y = (int) sections[0].Y;
     }   
 
     public override void Render() {
@@ -156,7 +158,7 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
     public int IndexOfSection(int x, int y) {
         int i = 0;
         foreach(Vector2 section in sections) {
-            if((int) section.X == x && (int) section.Y == y) return (i != 0)? -1 : i;
+            if((int) section.X == x && (int) section.Y == y) return i;
             i++;
         }
         return -1;
