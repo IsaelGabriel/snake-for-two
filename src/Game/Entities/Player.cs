@@ -104,7 +104,7 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
                 
             }else if(collision is Player) {
                 solidCollision = true;
-                if(item == ItemType.PowerUp) {
+                if(item == ItemType.PowerUp && collision != this) {
                     Player enemy = (Player) collision;
                     int index = enemy.IndexOfSection(newX, newY);
                     if(index == 0) Game.LoadScene(new GameOverScene(_ID));

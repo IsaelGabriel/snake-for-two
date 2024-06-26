@@ -1,6 +1,6 @@
 public abstract class CellEntity(int x, int y, MainScene parentScene) {
     private int _x = x, _y = y;
-    protected MainScene scene = parentScene;
+    protected readonly MainScene scene = parentScene;
     public int x {get=>_x; set=>_x=Math.Clamp(value, 0, scene.Columns - 1); }
     public int y {get=>_y; set=>_y=Math.Clamp(value, 0, scene.Rows - 1); }
 

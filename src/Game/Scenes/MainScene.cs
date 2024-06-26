@@ -7,19 +7,19 @@ public class MainScene : IScene
     private const int _defaultColumns = 15;
     private const float _defaultPlayerMovementInterval = 0.75f;
     private const float _margin = 2f;
-    private const int _powerUpChance = 5;
 
     public const int TileSize = 16;
     private readonly int _rows;
     private readonly int _columns;
     private readonly float _scaleFactor;
     private Camera2D _camera;
-    private List<CellEntity> _cellEntities = [];
     private List<CellEntity> _deleteList = [];
     private List<CellEntity> _addList = [];
     private readonly Random _rng = new Random();
     private IBackground _background;
 
+    public List<CellEntity> CellEntities = [];
+    private readonly List<Generator> _generators; 
     public Color ClearColor => Color.Beige;
     public int Rows => _rows;
     public int Columns => _columns;
@@ -43,6 +43,9 @@ public class MainScene : IScene
             Rotation = 0f
         };
         _background = new SquarePatternBackground(TileSize * 2, _scaleFactor);
+        _generators = [
+            new AppleGenerator(this)
+        ];
     }
 
     public static MainScene GenerateMainScene(int rows, int columns) {
@@ -55,40 +58,27 @@ public class MainScene : IScene
 
     public void Start()
     {
-        foreach(CellEntity entity in _cellEntities) entity.Start();
+        foreach(CellEntity entity in CellEntities) entity.Start();
+        foreach(Generator generator in _generators) generator.Start();
         AddEntity(new Player(0, Columns - 1, Rows / 2 - 1, this, _defaultPlayerMovementInterval));
         AddEntity(new Player(1, 0, Rows / 2 - 1, this, _defaultPlayerMovementInterval));
+        
     }
 
     public void Update()
     {
         foreach(CellEntity entity in _addList) {
-            _cellEntities.Add(entity);
+            CellEntities.Add(entity);
             entity.Start();
         }
         _addList = [];
-        foreach(CellEntity entity in _cellEntities) entity.Update();
+        foreach(CellEntity entity in CellEntities) entity.Update();
         foreach(CellEntity entity in _deleteList) {
-            _cellEntities.RemoveAll(e => e == entity);
+            CellEntities.RemoveAll(e => e == entity);
         }
         _deleteList = [];
-
-        if(!_cellEntities.OfType<Item>().Any()) GenerateApple();
-    }
-
-    private void GenerateApple() {
-        int x = 0;
-        int y = 0;
-        do {
-            x = _rng.Next() % Columns;
-            y = _rng.Next() % Rows;
-        } while(GetEntityInCell(x, y) != null);
-        ItemType type = (_rng.Next() % _powerUpChance != 0)? ItemType.Apple : ItemType.PowerUp;
-
-        Item apple = new Item(type, x, y, this);
-        _cellEntities.Add(apple);
-        apple.Start();
-
+        
+        foreach(Generator generator in _generators) generator.Update();
     }
 
     public void End()
@@ -106,7 +96,7 @@ public class MainScene : IScene
                     Raylib.DrawRectangleV(new Vector2(j, i) * TileSize, Vector2.One * TileSize, CellColors[index]);
                 }
             }
-            foreach(CellEntity entity in _cellEntities) entity.Render();
+            foreach(CellEntity entity in CellEntities) entity.Render();
 
         Raylib.EndMode2D();
 
@@ -116,7 +106,7 @@ public class MainScene : IScene
     public CellEntity? GetEntityInCell(int x, int y) {
         x = Math.Clamp(x, 0, Columns - 1);
         y = Math.Clamp(y, 0, Rows - 1);
-        foreach(CellEntity entity in _cellEntities) {
+        foreach(CellEntity entity in CellEntities) {
             if(entity.IsFillingCell(x, y)) return entity;
         }
         return null;
