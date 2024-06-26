@@ -60,8 +60,8 @@ public class MainScene : IScene
     {
         foreach(CellEntity entity in CellEntities) entity.Start();
         foreach(Generator generator in _generators) generator.Start();
-        AddEntity(new Player(0, Columns - 1, Rows / 2 - 1, this, _defaultPlayerMovementInterval));
-        AddEntity(new Player(1, 0, Rows / 2 - 1, this, _defaultPlayerMovementInterval));
+        AddEntity(new Player(0, 0, Rows / 2 - 1, this, _defaultPlayerMovementInterval));
+        AddEntity(new Player(1, Columns - 1, Rows / 2 - 1, this, _defaultPlayerMovementInterval));
         
     }
 

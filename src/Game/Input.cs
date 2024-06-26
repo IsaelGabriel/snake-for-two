@@ -10,16 +10,16 @@ public enum Action: int {
 public static class Input {
     private static readonly Dictionary<Action,KeyboardKey>[] Keys = [
         new(){
-            { Action.Up, KeyboardKey.Up},
-            { Action.Down, KeyboardKey.Down},
-            { Action.Left, KeyboardKey.Left},
-            { Action.Right, KeyboardKey.Right}
-        },
-        new(){
             { Action.Up, KeyboardKey.W},
             { Action.Down, KeyboardKey.S},
             { Action.Left, KeyboardKey.A},
             { Action.Right, KeyboardKey.D}
+        },
+        new(){
+            { Action.Up, KeyboardKey.Up},
+            { Action.Down, KeyboardKey.Down},
+            { Action.Left, KeyboardKey.Left},
+            { Action.Right, KeyboardKey.Right}
         }
     ];
 

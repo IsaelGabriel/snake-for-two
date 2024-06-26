@@ -108,12 +108,14 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
                     Player enemy = (Player) collision;
                     int index = enemy.IndexOfSection(newX, newY);
                     if(index == 0) Game.LoadScene(new GameOverScene(_ID));
-                    else {
+                    else if(index != -1){
                         enemy.sections.RemoveAt(index);
                         while(index < enemy.sections.Count) {
                             scene.AddEntity(new Item(ItemType.Apple, (int) enemy.sections[index].X, (int) enemy.sections[index].Y, scene));
                             enemy.sections.RemoveAt(index);
                         }
+                        solidCollision = false;
+                    }else {
                         solidCollision = false;
                     }
                 }else {
