@@ -166,7 +166,7 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
     /// <returns>The position where the object needs to be.</returns>
     private Vector2 GetAnimationPosition(Vector2 from, Vector2 to) {
         float t = _animationCount / (_movementInterval * 0.75f);
-        Vector2 movement = (to - from) * t;
+        Vector2 movement = (to - from) * (float) Math.Sin(t * Math.PI/2);
         return (from + movement) * MainScene.TileSize;
     }
 
