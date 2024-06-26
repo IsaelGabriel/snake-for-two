@@ -10,10 +10,10 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
         Color.Yellow,
         Color.Blue,
     ];
-    private static readonly Color[] _bodyColors = [
-        Color.DarkPurple,
-        Color.Orange,
-        Color.SkyBlue,
+    private static readonly Color[][] _bodyColors = [
+        [Color.DarkPurple, Color.Violet],
+        [Color.Orange, Color.Gold],
+        [Color.SkyBlue]
     ];
 
     private const uint _maxMovementBufferSize = 3;
@@ -36,7 +36,7 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
         }
     }
     private Color _headColor = (_headColors.Length > ID)? _headColors[ID] : Color.Gray;
-    private Color _bodyColor = (_bodyColors.Length > ID)? _bodyColors[ID] : Color.DarkGray;
+    private Color[] _bodyColor = (_bodyColors.Length > ID)? _bodyColors[ID] : [Color.DarkGray];
     private List<Vector2> sections = [];
     public ItemType? item = null;
 
@@ -49,6 +49,7 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
     }
 
     public override void Update() {
+        if(_ID > 2) return;
         x = (int) sections[0].X;
         y = (int) sections[0].Y;
 
@@ -109,11 +110,12 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
                     int index = enemy.IndexOfSection(newX, newY);
                     if(index == 0) Game.LoadScene(new GameOverScene(_ID));
                     else if(index != -1){
-                        enemy.sections.RemoveAt(index);
-                        while(index < enemy.sections.Count) {
+                        index++;
+                        while(index < enemy.sections.Count - 1) {
                             scene.AddEntity(new Item(ItemType.Apple, (int) enemy.sections[index].X, (int) enemy.sections[index].Y, scene));
                             enemy.sections.RemoveAt(index);
                         }
+                        enemy.sections.Remove(enemy.sections.Last());
                         solidCollision = false;
                     }else {
                         solidCollision = false;
@@ -150,8 +152,9 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
         Vector2 size = Vector2.One * MainScene.TileSize;
 
 
-        for(int i = 1; i < sections.Count - 1; i++) {
-            Raylib.DrawRectangleV(GetAnimationPosition(sections[i+1], sections[i]), Vector2.One * MainScene.TileSize, _bodyColor);
+        for(int i = sections.Count - 2; i > 0; i--) {
+            Color color = _bodyColor[(i - 1) % _bodyColor.Length];
+            Raylib.DrawRectangleV(GetAnimationPosition(sections[i+1], sections[i]), Vector2.One * MainScene.TileSize, color);
         }
         Raylib.DrawRectangleV(position, size, _headColor);
         if(item == ItemType.PowerUp) {
@@ -174,7 +177,8 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
 
     public override bool IsFillingCell(int x, int y)
     {
-        return sections.Contains(new Vector2(x, y));
+        int index = sections.IndexOf(new Vector2(x, y));
+        return index != -1 && index != sections.Count - 1;
     }
     
     public int IndexOfSection(int x, int y) {
