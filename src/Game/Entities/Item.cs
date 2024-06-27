@@ -22,16 +22,20 @@ public class Item(ItemType itemType, int x, int y, MainScene parentScene) : Cell
     {
         Vector2 size = Vector2.One * (MainScene.TileSize - 8);
         Color color = Color.Gray;
+        Color lineColor = Color.Black;
         switch(type) {
             case ItemType.Apple:
                 color = Color.Red;
                 break;
             case ItemType.PowerUp:
-                color = Color.Gold;
+                color = Color.White;
+                lineColor = Color.Gold;
                 break;
             default: break;
         }
-        Raylib.DrawRectangleV(GetRenderPosition(), size, color);
+        Vector2 renderPosition = GetRenderPosition();
+        Raylib.DrawRectangleV(renderPosition, size, color);
+        Raylib.DrawRectangleLinesEx(new Rectangle(renderPosition, size), 1.5f, lineColor);
     }
 
     private Vector2 GetRenderPosition() {
