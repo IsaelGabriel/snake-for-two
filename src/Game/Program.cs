@@ -1,7 +1,6 @@
 ﻿using Raylib_cs;
 
-public class Game {
-    private static Game _instance;
+public static class Game {
     
     private const string _windowTitle = "Snake for Two";   
     public static int WindowWidth => 600;
@@ -9,35 +8,28 @@ public class Game {
     public static int TargetFPS => 120;
     
     
-    private IScene? _sceneToLoad = null;
-    private IScene _currentScene;
+    private static IScene? _sceneToLoad = null;
+    private static IScene _currentScene = new GameOverScene(0);
 
-    private Game() {
-        _instance = this;
+    static void Main() {
         Raylib.InitWindow(WindowWidth, WindowHeight, _windowTitle);
         Raylib.SetTargetFPS(TargetFPS);
         Raylib.SetExitKey(KeyboardKey.Null);
-    }
-
-    static void Main() {
-        new Game();
-        _instance.Start();
-        _instance.GameLoop();
-        _instance.End();
-
+        Start();
+        GameLoop();
+        End();
     }
 
     public static void LoadScene(IScene scene) {
-        if(_instance._sceneToLoad != null) return;
-        _instance._sceneToLoad = scene;
+        if(_sceneToLoad != null) return;
+        _sceneToLoad = scene;
     }
 
-    private void Start() {
-        _currentScene = new GameOverScene(0);
+    private static void Start() {
         _currentScene.Start();
     }
 
-    private void GameLoop() {
+    private static void GameLoop() {
         while(!Raylib.WindowShouldClose()) {
             Update();
             Render();
@@ -50,11 +42,11 @@ public class Game {
         }
     }
 
-    private void Update() {
+    private static void Update() {
         _currentScene.Update();
     }
 
-    private void Render() {
+    private static void Render() {
         Raylib.BeginDrawing();
             Raylib.ClearBackground(_currentScene.ClearColor);
             _currentScene.Background?.Render();
@@ -62,7 +54,7 @@ public class Game {
         Raylib.EndDrawing();
     }
 
-    private void End() {
+    private static void End() {
         _currentScene.End();
         Raylib.CloseWindow();
     }
