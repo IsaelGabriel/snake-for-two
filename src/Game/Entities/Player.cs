@@ -126,6 +126,12 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
                     Game.LoadScene(new GameOverScene(_ID));
                 }
                 item = null;
+            }else if(collision is Portal) {
+                Portal portal = (Portal) collision;
+                int index = Array.IndexOf(portal.points, new(newX, newY)) + 1;
+                if(index >= portal.points.Length) index = 0;
+                newX = (int) portal.points[index].X;
+                newY = (int) portal.points[index].Y;
             }
         }
         if(!solidCollision) {

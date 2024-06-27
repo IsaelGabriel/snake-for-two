@@ -62,6 +62,7 @@ public class MainScene : IScene
         foreach(Generator generator in _generators) generator.Start();
         AddEntity(new Player(0, 0, Rows / 2 - 1, this, _defaultPlayerMovementInterval));
         AddEntity(new Player(1, Columns - 1, Rows / 2 - 1, this, _defaultPlayerMovementInterval));
+        AddEntity(new Portal([Vector2.Zero, new Vector2(Columns - 1, Rows - 1)], this));
         
     }
 
@@ -96,7 +97,14 @@ public class MainScene : IScene
                     Raylib.DrawRectangleV(new Vector2(j, i) * TileSize, Vector2.One * TileSize, CellColors[index]);
                 }
             }
-            foreach(CellEntity entity in CellEntities) entity.Render();
+            foreach(CellEntity entity in CellEntities) {
+                if(entity is Player) 
+                    continue;
+                entity.Render();
+            }
+            foreach(Player player in CellEntities.OfType<Player>()) {
+                player.Render();
+            }
 
         Raylib.EndMode2D();
 
