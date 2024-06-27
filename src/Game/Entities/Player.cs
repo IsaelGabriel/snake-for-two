@@ -3,23 +3,26 @@ using Raylib_cs;
 
 public class Player(uint ID, int x, int y, MainScene parentScene, float movementInterval) : CellEntity(x, y, parentScene) {
     private const int _defaultLength = 5;
-
-    private static readonly Color _powerUpColor = Color.RayWhite;
     private static readonly Color[] _headColors = [
         Color.Purple,
+        Color.SkyBlue,
         Color.Yellow,
-        Color.Blue,
     ];
     private static readonly Color[][] _bodyColors = [
         [Color.DarkPurple, Color.Violet],
+        [Color.Blue, Color.DarkBlue],
         [Color.Orange, Color.Gold],
-        [Color.SkyBlue]
+    ];
+    private static readonly Color[] _powerUpColors = [
+        Color.Red, Color.Orange, Color.Yellow, Color.Green,
+        Color.Blue, Color.SkyBlue, Color.Violet
     ];
 
     private const uint _maxMovementBufferSize = 3;
     private float _movementInterval = movementInterval;
     private float _movementIntervalCount = movementInterval;
     private float _animationCount = 0f;
+    private float _powerUpColorIndex = 0f;
     private readonly uint _ID = ID;
     private Vector2 _lastMovement = new(0, -1);
     private Vector2 _movement = new(0, -1);
@@ -71,8 +74,6 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
             }
         }
 
-
-
         _movementIntervalCount -= Raylib.GetFrameTime();
 
         if(_movementIntervalCount > 0f) return;
@@ -96,6 +97,7 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
                     break;
                     case ItemType.PowerUp:
                         item = ItemType.PowerUp;
+                        _powerUpColorIndex = 0;
                         scene.Destroy(collision);
                     break;
                     default:
@@ -147,7 +149,11 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
 
     public override void Render() {
         _animationCount += Raylib.GetFrameTime();
-        if(_animationCount > _movementInterval * 0.75f) _animationCount = _movementInterval * 0.75f;
+        _powerUpColorIndex += Raylib.GetFrameTime() * 10;
+        if(_powerUpColorIndex >= _powerUpColors.Length) _powerUpColorIndex = 0f;
+        if(_animationCount > _movementInterval * 0.75f) {
+            _animationCount = _movementInterval * 0.75f;
+        }
         Vector2 position = GetAnimationPosition(sections[1], sections[0]);
         Vector2 size = Vector2.One * MainScene.TileSize;
 
@@ -156,9 +162,12 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
             Color color = _bodyColor[(i - 1) % _bodyColor.Length];
             Raylib.DrawRectangleV(GetAnimationPosition(sections[i+1], sections[i]), Vector2.One * MainScene.TileSize, color);
         }
-        Raylib.DrawRectangleV(position, size, _headColor);
+        Rectangle headRect = new Rectangle(position, size);
+        Raylib.DrawRectangleRec(headRect, _headColor);
         if(item == ItemType.PowerUp) {
-            Raylib.DrawRectangleV(position + Vector2.One * 3, size - Vector2.One * 6, _powerUpColor);
+            Raylib.DrawRectangleLinesEx(headRect, 1.5f, _powerUpColors[(int) Math.Floor(_powerUpColorIndex)]);
+        }else {
+            Raylib.DrawRectangleLinesEx(headRect, 2f, Color.Black);
         }
     
     }
