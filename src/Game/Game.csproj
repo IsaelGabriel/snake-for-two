@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetName>Snake for Two</TargetName>
     <AssemblyName>Snake for Two</AssemblyName>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
