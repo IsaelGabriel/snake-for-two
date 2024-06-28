@@ -12,6 +12,11 @@ public static class Game {
     private static IScene _currentScene = new GameOverScene(0);
 
     static void Main() {
+        TraceLogLevel traceLog = TraceLogLevel.Fatal;
+        #if DEBUG
+            traceLog = TraceLogLevel.All;
+        #endif
+        Raylib.SetTraceLogLevel(traceLog);
         Raylib.InitWindow(WindowWidth, WindowHeight, _windowTitle);
         Raylib.SetTargetFPS(TargetFPS);
         Raylib.SetExitKey(KeyboardKey.Null);
