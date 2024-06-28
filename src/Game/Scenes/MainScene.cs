@@ -5,7 +5,7 @@ public class MainScene : IScene
 {
     private const int _defaultRows = 15;
     private const int _defaultColumns = 15;
-    private const float _defaultPlayerMovementInterval = 0.75f;
+    private const float _defaultPlayerMovementInterval = 0.35f;
     private const float _margin = 2f;
 
     public const int TileSize = 16;

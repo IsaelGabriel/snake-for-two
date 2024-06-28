@@ -147,7 +147,7 @@ public class Player(uint ID, int x, int y, MainScene parentScene, float movement
             }
         }
         _lastMovement = _movement;
-        _movementIntervalCount = Math.Clamp(_movementInterval - (sections.Count - 2) * 0.01f, 0.025f, _movementInterval);
+        _movementIntervalCount = Math.Clamp(_movementInterval - (sections.Count - 2) * 0.01f, 0.1f, _movementInterval);
         if(item == ItemType.PowerUp) _movementIntervalCount *= 0.5f;
         x = (int) sections[0].X;
         y = (int) sections[0].Y;
