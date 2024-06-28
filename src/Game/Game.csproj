@@ -1,12 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <TargetName>Snake for Two</TargetName>
+    <AssemblyName>Snake for Two</AssemblyName>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
     <VersionPrefix>0.0.1</VersionPrefix>
     <Nullable>enable</Nullable>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <DebugType>None</DebugType>
+    <DebugSymbols>False</DebugSymbols>
   </PropertyGroup>
 
   <ItemGroup>
